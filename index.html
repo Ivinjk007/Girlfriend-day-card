@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy National Girlfriends Day!</title>
+    <!-- Google Font: Dancing Script -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Hide scrollbars if content exceeds viewport */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #ffdde1, #e6808e); /* Soft pink-red gradient */
+            font-family: 'Georgia', serif; /* A nice font for notes */
+            color: #333;
+            position: relative; /* Needed for positioning elements directly inside body */
+        }
+
+        .card-container {
+            position: relative;
+            width: 90vw; /* Responsive width */
+            max-width: 800px; /* Increased max-width for desktop */
+            height: 90vh; /* Responsive height */
+            max-height: 900px; /* Increased max-height for desktop */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+            border-radius: 20px; /* Rounded corners for the container */
+            overflow: hidden; /* Important for containing fireworks and ensuring heart shape is clipped */
+            background-color: transparent; /* Container itself is transparent, heart is the background */
+            z-index: 10; /* Ensure the card is above the side images */
+
+            /* Initial state for mo.js fade-in transition */
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        /* Actual Heart Shape CSS */
+        .actual-heart {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: white; /* The white heart background */
+            transform: rotate(-45deg); /* Rotate for heart shape */
+            top: 0;
+            left: 0;
+            z-index: 1; /* Below text and decorations */
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Shadow for the heart itself */
+        }
+
+        .actual-heart::before,
+        .actual-heart::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: white;
+        }
+
+        .actual-heart::before {
+            top: -50%;
+            left: 0;
+        }
+
+        .actual-heart::after {
+            top: 0;
+            left: 50%;
+        }
+
+        /* Fireworks Container */
+        .fireworks-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2; /* Above the heart shape */
+            pointer-events: none; /* Allows clicks to pass through */
+        }
+
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ffd700; /* Gold color for fireworks */
+            border-radius: 50%;
+            opacity: 0;
+            animation: firework-burst 1.5s ease-out forwards;
+        }
+
+        @keyframes firework-burst {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Roses Decoration (using emojis for eco-friendliness) */
+        .roses-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3; /* Above fireworks */
+            pointer-events: none; /* Allows clicks to pass through to content */
+        }
+
+        .rose-emoji {
+            position: absolute;
+            font-size: 3.5em; /* Slightly larger rose emoji */
+            opacity: 0.8;
+            animation: float-rose 10s infinite ease-in-out;
+            text-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        @keyframes float-rose {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        /* Notes Area */
+        .notes-area {
+            position: relative;
+            z-index: 4; /* Above all decorations */
+            text-align: center;
+            color: #4a0e1e; /* Deep reddish-brown for text */
+            font-size: 1.3em; /* Slightly larger for better fit */
+            padding: 25px; /* Increased padding */
+            max-width: 80%; /* Adjusted for better fit within heart */
+            line-height: 1.7; /* Increased line height for readability */
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for text readability */
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(2px); /* Subtle blur effect */
+            display: flex; /* Use flexbox for internal alignment */
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center items horizontally */
+            gap: 20px; /* Increased space between image, heading, and paragraph */
+            max-height: 80%; /* NEW: Make notes area scrollable if content overflows */
+            overflow-y: auto; /* NEW: Add vertical scrollbar */
+            /* Add custom scrollbar styling for aesthetics */
+            scrollbar-width: thin; /* Firefox */
+            scrollbar-color: #ff69b4 #f0f0f0; /* Thumb and track color */
+        }
+
+        .notes-area::-webkit-scrollbar {
+            width: 8px; /* Width of the scrollbar */
+        }
+
+        .notes-area::-webkit-scrollbar-track {
+            background: #f0f0f0; /* Color of the track */
+            border-radius: 10px;
+        }
+
+        .notes-area::-webkit-scrollbar-thumb {
+            background-color: #ff69b4; /* Color of the scroll thumb */
+            border-radius: 10px;
+            border: 2px solid #f0f0f0; /* Padding around thumb */
+        }
+
+        .notes-area h1 {
+            color: #c0392b; /* Reddish color for heading */
+            margin-bottom: 0; /* Remove default margin to control spacing with gap */
+            font-size: 2.2em; /* Decent size for heading */
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* Profile Image Styling (for the one inside notes-area) - NOW A RED CIRCLE */
+        .profile-image-container {
+            width: 110px; /* Slightly larger image */
+            height: 110px;
+            border-radius: 50%; /* Make it circular */
+            overflow: hidden; /* Ensure image is clipped to circle */
+            border: 3px solid #c0392b; /* Red border */
+            box-shadow: 0 0 15px rgba(192, 57, 43, 0.7); /* Stronger red glow */
+            flex-shrink: 0; /* Prevent shrinking */
+            background-color: #e74c3c; /* Red background color */
+            transform: none; /* Ensure no rotation */
+            position: relative; /* Needed for img positioning */
+        }
+
+        .profile-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cover the container, cropping if necessary */
+            display: block; /* Remove extra space below image */
+            transform: none; /* Ensure no rotation */
+        }
+
+        /* Side Images Styling (now circular and relative to body) */
+        .side-image-container {
+            position: absolute; /* Position relative to the body */
+            width: 90px; /* Size of the side circles */
+            height: 90px;
+            border-radius: 50%; /* Make it circular */
+            overflow: hidden; /* Ensure image is clipped to circle */
+            border: 3px solid #ffc0cb; /* Lighter pink border */
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.7); /* Stronger glow */
+            z-index: 5; /* Below the main card, but above background */
+            pointer-events: none; /* Allow interaction with card content */
+            background-color: #ff69b4; /* Optional: background color if image doesn't fill */
+        }
+
+        .side-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transform: none; /* Ensure no rotation */
+        }
+
+        .left-side-image {
+            top: 5%; /* Top-left diagonal */
+            left: 5%;
+        }
+
+        .right-side-image {
+            bottom: 5%; /* Bottom-right diagonal */
+            right: 5%;
+        }
+
+        /* Style for the simple I LOVE YOU transition text */
+        .love-you-transition {
+            font-family: 'Dancing Script', cursive; /* Applied new font */
+            font-size: 3.2em; /* Adjusted font size for new font and slower animation */
+            font-weight: bold;
+            color: #c0392b; /* Red color */
+            position: relative; /* Relative positioning within notes-area flexbox */
+            opacity: 0; /* Initially hidden */
+            z-index: 5; /* Above other notes-area content */
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            white-space: nowrap; /* Prevent text from wrapping */
+            letter-spacing: 2px; /* Add some spacing */
+            margin-bottom: -10px; /* Pull it slightly closer to the image */
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-container {
+                width: 95vw;
+                height: 95vh;
+                padding: 15px;
+            }
+            .notes-area {
+                font-size: 1.1em; /* Slightly larger on mobile */
+                padding: 15px;
+                gap: 10px; /* Smaller gap on mobile */
+            }
+            .notes-area h1 {
+                font-size: 1.8em; /* Slightly larger on mobile */
+            }
+            .rose-emoji {
+                font-size: 2.8em; /* Slightly larger on mobile */
+            }
+            .profile-image-container {
+                width: 90px; /* Slightly larger on mobile */
+                height: 90px;
+            }
+            .side-image-container {
+                width: 70px; /* Slightly larger on mobile */
+                height: 70px;
+            }
+            .left-side-image {
+                top: 2%;
+                left: 2%;
+            }
+            .right-side-image {
+                bottom: 2%;
+                right: 2%;
+            }
+            .love-you-transition {
+                font-size: 2.4em; /* Adjust for mobile */
+                top: 0; /* Remove fixed top for mobile */
+                margin-bottom: -5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- New: Left Side Image (now circular and positioned diagonally) -->
+    <div class="side-image-container left-side-image">
+        <img src="image1.jpg" alt="Left Decorative Image" onerror="this.onerror=null;this.src='https://placehold.co/90x90/FFC0CB/FFFFFF?text=💖';">
+    </div>
+
+    <!-- New: Right Side Image (now circular and positioned diagonally) -->
+    <div class="side-image-container right-side-image">
+        <img src="image1.jpg" alt="Right Decorative Image" onerror="this.onerror=null;this.src='https://placehold.co/90x90/FFC0CB/FFFFFF?text=❤️';">
+    </div>
+
+    <div class="card-container" id="cardContainer">
+        <div class="actual-heart"></div>
+        <div class="fireworks-container" id="fireworksContainer"></div>
+        <div class="roses-decoration" id="rosesDecoration"></div>
+        
+        <div class="notes-area">
+            <!-- Simple I LOVE YOU transition text -->
+            <div class="love-you-transition" id="loveYouTransition"></div>
+
+            <div class="profile-image-container">
+                <img src="image2.jpg" alt="Aleena's Profile Picture" onerror="this.onerror=null;this.src='https://placehold.co/110x110/FF0000/FFFFFF?text=❤️';">
+            </div>
+            <h1 id="mainHeading"><b>Happy National Girlfriends Day, Aleena!</b></h1>
+            <p id="mainMessage">
+                My Dearest Aleena,<br><br>
+                I want to celebrate you and everything you mean to me. You bring so much joy, laughter, and love into my life. Every moment with you is a cherished gift, and I'm so incredibly grateful to have you by my side.
+                You just made my life a whole better just by being in it even if its just a short period of time.<br><br> I want to know a lot more about you and love you more everyday.
+                I hope all your dreams comes true and I will always support you throughout.
+                <br><br>
+                Thank you for your kind soul, your beautiful smile, and your amazing heart. You truly are the most wonderful person I know.
+                <br><br>
+                With all my love,
+                <br>
+                [IJ]
+            </p>
+        </div>
+    </div>
+
+    <!-- mo.js library for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mo-js/0.288.2/mo.min.js"></script>
+    <script>
+        // Function to create and animate fireworks
+        function createFirework() {
+            const container = document.getElementById('fireworksContainer');
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            
+            // Random position within the container
+            const x = Math.random() * 100; // %
+            const y = Math.random() * 100; // %
+            firework.style.left = `${x}%`;
+            firework.style.top = `${y}%`;
+
+            // Random color for a bit more variety
+            const colors = ['#ffd700', '#ff69b4', '#00ffff', '#ff00ff', '#00ff00']; // Gold, HotPink, Cyan, Magenta, Lime
+            firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            container.appendChild(firework);
+
+            // Remove firework after animation
+            firework.addEventListener('animationend', () => {
+                firework.remove();
+            });
+        }
+
+        // Create fireworks at intervals
+        setInterval(createFirework, 800); // Every 0.8 seconds
+
+        // Function to create and position roses
+        function createRoses() {
+            const container = document.getElementById('rosesDecoration');
+            const roseCount = 6; // Number of roses to scatter
+            for (let i = 0; i < roseCount; i++) {
+                const rose = document.createElement('span');
+                rose.className = 'rose-emoji';
+                rose.textContent = '🌹'; // Rose emoji
+
+                // Random position (adjust to corners/edges)
+                const edge = Math.floor(Math.random() * 4); // 0:top, 1:right, 2:bottom, 3:left
+                let x, y;
+
+                if (edge === 0) { // Top
+                    x = Math.random() * 100;
+                    y = Math.random() * 10; // Near top
+                } else if (edge === 1) { // Right
+                    x = 90 + Math.random() * 10; // Near right edge
+                    y = Math.random() * 100;
+                } else if (edge === 2) { // Bottom
+                    x = Math.random() * 100;
+                    y = 90 + Math.random() * 10; // Near bottom
+                } else { // Left
+                    x = Math.random() * 10; // Near left edge
+                    y = Math.random() * 100;
+                }
+
+                rose.style.left = `${x}%`;
+                rose.style.top = `${y}%`;
+                rose.style.animationDelay = `${Math.random() * 5}s`; // Stagger animation start
+                rose.style.transform = `rotate(${Math.random() * 360}deg)`; // Random initial rotation
+
+                container.appendChild(rose);
+            }
+        }
+
+        // Function to initialize all animations after DOM is ready and mo.js is loaded
+        function initializeAnimations() {
+            console.log("Attempting to initialize animations.");
+            const cardContainer = document.getElementById('cardContainer');
+            const loveYouTransition = document.getElementById('loveYouTransition');
+            const mainMessage = document.getElementById('mainMessage'); 
+
+            if (!cardContainer) {
+                console.error("Error: cardContainer element not found!");
+                return;
+            }
+            // Check if mojs is defined and not null/undefined
+            if (typeof mojs === 'undefined' || mojs === null) {
+                console.error("Error: mo.js library still not loaded or initialized!");
+                cardContainer.style.opacity = 1;
+                cardContainer.style.transform = 'scale(1)';
+                return;
+            }
+            if (!loveYouTransition) {
+                console.error("Error: loveYouTransition element not found!");
+                return;
+            }
+
+
+            console.log("All elements and mo.js found. Starting animations...");
+            createRoses(); // Call existing rose function
+
+            // mo.js Tween for the card's fade-in and scale-in
+            new mojs.Tween({
+                duration: 1500, // Animation duration in milliseconds
+                delay: 500, // Delay before animation starts
+                easing: 'cubic.out', // Easing function for a smooth effect
+                onUpdate: (progress) => {
+                    cardContainer.style.opacity = progress;
+                    cardContainer.style.transform = `scale(${0.8 + (0.2 * progress)})`;
+                },
+                onComplete: () => {
+                    console.log("Card fade-in animation complete.");
+                    cardContainer.style.opacity = 1;
+                    cardContainer.style.transform = 'scale(1)';
+                    startLoveTransitionSequence(); // Start the new complex animation sequence
+                }
+            }).play();
+
+            // Function for the complex "I LOVE YOU" transition sequence
+            function startLoveTransitionSequence() {
+                console.log("Starting complex love transition sequence.");
+                const loveTimeline = new mojs.Timeline({ repeat: 999 }); // Loop indefinitely
+
+                const phrases = [
+                    'I LOVE YOU',
+                    'I ❤️ U',
+                    '❤️'
+                ];
+
+                const fadeDuration = 3000; // Even Slower fade in/out
+                const holdDuration = 6000; // Even Longer hold duration
+                const blinkDelay = 1000; // Increased delay for visual separation
+
+                // Helper to create a fade-out-then-change-then-fade-in sequence
+                const createPhraseTransition = (toText, toFontSize = null) => {
+                    return [
+                        new mojs.Tween({
+                            duration: fadeDuration / 2, // Fade out current text
+                            easing: 'cubic.in',
+                            onUpdate: (progress) => {
+                                loveYouTransition.style.opacity = 1 - progress;
+                                loveYouTransition.style.transform = `scale(${1 - (0.2 * progress)})`;
+                            },
+                            onComplete: () => {
+                                loveYouTransition.textContent = toText;
+                                if (toFontSize) {
+                                    loveYouTransition.style.fontSize = toFontSize;
+                                } else {
+                                    loveYouTransition.style.fontSize = '3.2em'; // Reset to default text size
+                                }
+                                loveYouTransition.style.opacity = 0; // Ensure hidden before new fade-in
+                                loveYouTransition.style.transform = `scale(0.8)`; // Reset scale for new text to fade in from
+                            }
+                        }),
+                        new mojs.Tween({
+                            duration: fadeDuration / 2, // Fade in new text
+                            delay: blinkDelay, // Small delay for visual separation
+                            easing: 'elastic.out',
+                            onUpdate: (progress) => {
+                                loveYouTransition.style.opacity = progress;
+                                loveYouTransition.style.transform = `scale(${0.8 + (0.2 * progress)})`;
+                            }
+                        })
+                    ];
+                };
+
+                // Phase 1: "I LOVE YOU" slides in
+                loveTimeline.add(
+                    new mojs.Tween({
+                        duration: 4000, // Initial slide-in duration, made even slower
+                        easing: 'elastic.out',
+                        onStart: () => {
+                            loveYouTransition.textContent = phrases[0];
+                            loveYouTransition.style.opacity = 0;
+                            loveYouTransition.style.transform = 'translateY(-50px) scale(0.8)';
+                            loveYouTransition.style.display = 'block';
+                            loveYouTransition.style.fontSize = '3.2em';
+                        },
+                        onUpdate: (progress) => {
+                            loveYouTransition.style.opacity = progress;
+                            loveYouTransition.style.transform = `translateY(${(-50 * (1 - progress))}px) scale(${0.8 + (0.2 * progress)})`;
+                        },
+                        onComplete: () => {
+                            loveYouTransition.style.opacity = 1;
+                            loveYouTransition.style.transform = 'translateY(0) scale(1)';
+                        }
+                    })
+                );
+
+                // Phase 2: "I LOVE YOU" to "I ❤️ U"
+                loveTimeline.add(
+                    new mojs.Tween({ delay: holdDuration }), // Hold "I LOVE YOU"
+                    ...createPhraseTransition(phrases[1]) // Transition to "I ❤️ U"
+                );
+
+                // Phase 3: "I ❤️ U" to "❤️"
+                loveTimeline.add(
+                    new mojs.Tween({ delay: holdDuration }), // Hold "I ❤️ U"
+                    ...createPhraseTransition(phrases[2], '5.2em') // Transition to "❤️"
+                );
+
+                // Final phase: Heart holds and slides out
+                loveTimeline.add(
+                    new mojs.Tween({
+                        duration: fadeDuration * 3, // Even Slower slide out
+                        delay: holdDuration + 3000, // Longer hold for heart before sliding out
+                        easing: 'cubic.in',
+                        onUpdate: (progress) => {
+                            loveYouTransition.style.opacity = 1 - progress;
+                            loveYouTransition.style.transform = `translateY(${-50 * progress}px) scale(${1 - (0.2 * progress)})`;
+                        },
+                        onComplete: () => {
+                            loveYouTransition.style.display = 'none'; // Hide completely until next loop
+                            loveYouTransition.style.fontSize = '3.2em'; // Reset font size for next loop
+                        }
+                    })
+                );
+
+                loveTimeline.play();
+            }
+        }
+
+        // Use window.addEventListener('load') to ensure all resources (including mo.js) are fully loaded
+        window.addEventListener('load', () => {
+            console.log("Window load event fired. Initializing animations.");
+            initializeAnimations();
+        });
+    </script>
+</body>
+</html>
