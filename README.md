@@ -1,2 +1,2 @@
-# Girlfriend-day-card
+# wishcard
 A website for her
